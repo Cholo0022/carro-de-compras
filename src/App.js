@@ -11,15 +11,55 @@ class App extends Component {
       { name: "arbeja", price: 1000, img: "/productos/arbejas.jpg" },
       { name: "lechuga", price: 500, img: "/productos/lechuga.jpg" },
     ],
+    carro: [
+      // {name: "tomate", price: 1500, img: "/productos/tomate.jpg", cantidad: 1}
+    ],
+    esCarroVisible: false,
   };
+
+  agregarAlCarro = (producto) => {
+    const { carro } = this.state;
+    if (carro.find((x) => x.name === producto.name)) {
+      const newCarro = carro.map((x) =>
+        x.name === producto.name
+          ? {
+              ...x,
+              cantidad: x.cantidad + 1,
+            }
+          : x
+      );
+      return this.setState({
+        carro: newCarro,
+      });
+    }
+    return this.setState({
+      carro: this.state.carro.concat({
+        ...producto,
+        cantidad: 1,
+      }),
+    });
+  };
+
+  mostrarCarro = () => {
+    if (!this.state.carro.length) {
+      return;
+    }
+    this.setState({ esCarroVisible: !this.state.esCarroVisible });
+  };
+
   render() {
+    const { esCarroVisible } = this.state;
     return (
       <div>
-        <Navbar />
+        <Navbar
+          carro={this.state.carro}
+          esCarroVisible={esCarroVisible}
+          mostrarCarro={this.mostrarCarro}
+        />
         <Layout>
           <Title />
           <Productos
-            agregarAlCarro={() => console.log("Todavia no hace nada")}
+            agregarAlCarro={this.agregarAlCarro}
             productos={this.state.productos}
           />
         </Layout>
